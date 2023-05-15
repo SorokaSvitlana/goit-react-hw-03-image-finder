@@ -1,4 +1,4 @@
-export const ImageGalleryItem = () => {
+export const ImageGalleryItem = ({url}) => {
 return (<li>
-<img src="" alt="" />
+<img src={url} alt="" width="100%" height="200"/>
 </li> )}

@@ -1,5 +1,7 @@
 import React, { Component } from "react";
 import { Searchbar } from "./Searchbar/Searchbar";
+import { ImageGallery } from "./ImageGallery/ImageGallery";
+import { ImageGalleryItem } from "./ImageGalleryItem/ImageGalleryItem";
 
 export class App extends Component {
   state = {
@@ -7,26 +9,25 @@ export class App extends Component {
     page: 1,
     perPage: 12,
     totalHits: 0,
-    searchQuery: 'cat',
+    searchQuery: '',
   };
 
-  componentDidMount() {
-    const { searchQuery, page, perPage } = this.state;
-    fetch(`https://pixabay.com/api/?key=34990122-c9c933059a0835fdbbbaed835&q=${searchQuery}&page=${page}&per_page=${perPage}`)
-      .then(response => response.json())
-      .then(data => {
-        console.log(data)
-        this.setState({
-          hits: data.hits,
-          totalHits: data.totalHits,
-        })})
-      .catch(error => console.log(error));
-  }
+  handleFormSubmit = searchQuery => {
+    this.setState({ searchQuery });
+  };
 
   render() {
     return (
       <div>
-        <Searchbar />
+        <Searchbar onSubmit={this.handleFormSubmit} />
+        <ImageGallery>
+          {this.state.hits.map(hit => (
+            <ImageGalleryItem
+              url={hit.webformatURL}
+              key={hit.id}
+            />
+          ))}
+        </ImageGallery>
         {/* Add other components here */}
       </div>
     );
