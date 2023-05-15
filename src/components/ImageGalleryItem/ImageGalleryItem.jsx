@@ -1,4 +1,6 @@
+import { GalleryItem, GalleryItemImage } from "./ImageGalleryItem.Styled"
+
 export const ImageGalleryItem = ({url}) => {
-return (<li>
-<img src={url} alt="" width="100%" height="200"/>
-</li> )}
+return (<GalleryItem>
+<GalleryItemImage src={url} alt="" width="200" height="200"/>
+</GalleryItem> )}

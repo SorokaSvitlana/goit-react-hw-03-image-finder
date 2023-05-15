@@ -1,7 +1,8 @@
-import React, { Component } from "react";
-import { Searchbar } from "./Searchbar/Searchbar";
-import { ImageGallery } from "./ImageGallery/ImageGallery";
-import { ImageGalleryItem } from "./ImageGalleryItem/ImageGalleryItem";
+import React, { Component } from 'react';
+import ImageGallery from 'components/ImageGallery/ImageGallery';
+import SearchBar from 'components/Searchbar/Searchbar';
+import LoadMoreBtn from './Button/Button';
+import Loader from './Loader/Loader';
 
 export class App extends Component {
   state = {
@@ -10,25 +11,60 @@ export class App extends Component {
     perPage: 12,
     totalHits: 0,
     searchQuery: '',
+    status: 'idle',
+    error: null,
   };
 
-  handleFormSubmit = searchQuery => {
-    this.setState({ searchQuery });
+  componentDidMount() {
+    this.fetchImages = () => {
+      const { searchQuery, page, perPage } = this.state;
+      this.setState({ status: 'pending', error: null });
+      fetch(
+        `https://pixabay.com/api/?key=34990122-c9c933059a0835fdbbbaed835&q=${searchQuery}&page=${page}&per_page=${perPage}`
+      )
+        .then(response => response.json())
+        .then(data => {
+          
+          this.setState(prevState => ({
+            hits: [...prevState.hits, ...data.hits],
+            totalHits: data.totalHits,
+            status: 'resolved',
+          }));
+        })
+        .catch(error => {this.setState({status:'rejected', })});
+    };
+  }
+
+  
+
+  handleSubmit = searchValue => {
+    this.setState({ searchQuery: searchValue, page: 1, hits: [] }, this.fetchImages);
+  };
+
+  handleLoadMore = () => {
+    this.setState(
+      prevState => ({
+        page: prevState.page + 1,
+      }),
+      () => {
+        this.fetchImages();
+      }
+    );
   };
 
   render() {
+    const { hits,status } = this.state;
+
     return (
       <div>
-        <Searchbar onSubmit={this.handleFormSubmit} />
-        <ImageGallery>
-          {this.state.hits.map(hit => (
-            <ImageGalleryItem
-              url={hit.webformatURL}
-              key={hit.id}
-            />
-          ))}
-        </ImageGallery>
-        {/* Add other components here */}
+        {status === 'pending' && <Loader/>}
+        <SearchBar onSubmit={this.handleSubmit} />
+        {hits.length > 0 && (
+          <>
+            <ImageGallery hits={hits} />
+            <LoadMoreBtn onClick={this.handleLoadMore} />
+          </>
+        )}
       </div>
     );
   }

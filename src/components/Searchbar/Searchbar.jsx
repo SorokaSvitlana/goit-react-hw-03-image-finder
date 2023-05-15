@@ -1,36 +1,31 @@
 import React, { Component } from "react";
+import { SearchForm, SearchFormButton, SearchFormButtonLabel, SearchFormInput, Searchbar } from "./Searchbar.Styled";
+import { CiSearch } from 'react-icons/ci';
 
-export class Searchbar extends Component {
+class SearchBar extends Component {
   state = {
-    searchQuery: '',
+    searchQuery: "",
   };
 
   handleSearchQuery = event => {
-    this.setState({ searchQuery: event.target.value.toLowerCase() })
-  }
+    this.setState({ searchQuery: event.target.value.toLowerCase() });
+  };
 
   handleSubmit = event => {
     event.preventDefault();
-    const { onSubmit } = this.props;
     const { searchQuery } = this.state;
-
-    if (searchQuery.trim() === '') {
-      return;
-    }
-
-    onSubmit(searchQuery);
-    this.setState({ searchQuery: '' });
-  }
+    this.props.onSubmit(searchQuery);
+  };
 
   render() {
     return (
-      <header>
-        <form onSubmit={this.handleSubmit}>
-          <button type="submit">
-            <span>Search</span>
-          </button>
+      <Searchbar>
+        <SearchForm onSubmit={this.handleSubmit}>
+          <SearchFormButton type="submit">
+            <SearchFormButtonLabel> <CiSearch/></SearchFormButtonLabel>
+          </SearchFormButton>
 
-          <input
+          <SearchFormInput
             value={this.state.searchQuery}
             onChange={this.handleSearchQuery}
             name="searchQuery"
@@ -39,8 +34,10 @@ export class Searchbar extends Component {
             autoFocus
             placeholder="Search images and photos"
           />
-        </form>
-      </header>
+        </SearchForm>
+      </Searchbar>
     );
   }
 }
+
+export default SearchBar;
