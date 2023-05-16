@@ -53,7 +53,7 @@ export class App extends Component {
   };
 
   render() {
-    const { hits,status } = this.state;
+    const { hits,status, totalHits, perPage, page } = this.state;
 
     return (
       <div>
@@ -62,7 +62,7 @@ export class App extends Component {
         {hits.length > 0 && (
           <>
             <ImageGallery hits={hits} />
-            <LoadMoreBtn onClick={this.handleLoadMore} />
+            {status === 'resolved' && totalHits >= page * perPage && (<LoadMoreBtn onClick={this.handleLoadMore} />)}            
           </>
         )}
       </div>
